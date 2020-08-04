@@ -4,7 +4,7 @@ const User = require('../models/user');
 const HttpError = require('../models/http-error');
 
 const addCar = async (req, res, next) => {
-  const { regno, model, preferredpayment } = req.body;
+  const { regno, model, address } = req.body;
   console.log(req.body);
   console.log(req.file);
   console.log(req.userData);
@@ -12,7 +12,7 @@ const addCar = async (req, res, next) => {
     carModel: model,
     carRegNo: regno,
     carImage: req.file.buffer,
-    preferredPayment: preferredpayment,
+    address: address,
     owner: req.userData.userId,
   });
   console.log(newCar);
@@ -53,6 +53,7 @@ const getCarsByUserId = async (req, res, next) => {
   let userWithCars;
   try {
     userWithCars = await User.findById(userId).populate('cars');
+    console.log(userWithCars);
   } catch (err) {
     const error = new HttpError(
       'Fetching cars failed, please try again later.',
