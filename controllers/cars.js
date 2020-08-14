@@ -5,9 +5,6 @@ const HttpError = require('../models/http-error');
 
 const addCar = async (req, res, next) => {
   const { regno, model, address } = req.body;
-  console.log(req.body);
-  console.log(req.file);
-  console.log(req.userData);
   const newCar = new Car({
     carModel: model,
     carRegNo: regno,
@@ -15,10 +12,8 @@ const addCar = async (req, res, next) => {
     address: address,
     owner: req.userData.userId,
   });
-  console.log(newCar);
   let user;
   try {
-    console.log(req.userData);
     user = await User.findById(req.userData.userId);
   } catch (err) {
     const error = new HttpError(
@@ -31,7 +26,6 @@ const addCar = async (req, res, next) => {
     const error = new HttpError('Could not find user for provided id.', 404);
     return next(error);
   }
-  console.log(user);
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -41,7 +35,6 @@ const addCar = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError('Adding car failed, please try again.', 500);
-    console.log(err);
     return next(error);
   }
   res.status(201).json({ car: newCar });
@@ -53,13 +46,11 @@ const getCarsByUserId = async (req, res, next) => {
   let userWithCars;
   try {
     userWithCars = await User.findById(userId).populate('cars');
-    console.log(userWithCars);
   } catch (err) {
     const error = new HttpError(
       'Fetching cars failed, please try again later.',
       500
     );
-    console.log(err);
     return next(error);
   }
 
